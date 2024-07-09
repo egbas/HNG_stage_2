@@ -23,7 +23,7 @@ public class OrganisationController {
     }
 
     @GetMapping("organisations/{orgId}")
-    ResponseEntity<ApiResponse<?>> getOrgById(@PathVariable String orgId){
+    ResponseEntity<ApiResponse<?>> getOrgById(@PathVariable Long orgId){
         ApiResponse<?> response = organisationService.getOrgById(orgId);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -34,13 +34,13 @@ public class OrganisationController {
     ResponseEntity<ApiResponse<?>> createOrg(@RequestBody RegisterRequestOrg registerRequestOrg){
         ApiResponse<?> response = organisationService.registerOrg(registerRequestOrg);
 
-        if (response.getStatusCode() == HttpStatus.CREATED.value()){
+        if (response.getStatusCode() == HttpStatus.CREATED){
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } else {
             ApiResponse<?> failedResponse = ApiResponse.builder()
                     .status("Bad request")
                     .message("Client error")
-                    .statusCode(HttpStatus.BAD_REQUEST.value())
+                    .statusCode(HttpStatus.BAD_REQUEST)
                     .build();
             return new ResponseEntity<>(failedResponse, HttpStatus.BAD_REQUEST);
 
@@ -50,7 +50,7 @@ public class OrganisationController {
     }
 
     @PostMapping("organisations/{orgId}/users")
-    ResponseEntity<ApiResponse<?>> getOrgById(@PathVariable String orgId, String userId){
+    ResponseEntity<ApiResponse<?>> getOrgById(@PathVariable Long orgId, @RequestBody Long userId){
         ApiResponse<?> response = organisationService.addUserToOrg(orgId, userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);

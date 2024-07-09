@@ -6,7 +6,7 @@ import com.egbas.HNG_stage_two.payload.RegisterRequestOrg;
 
 public interface OrganisationService {
     ApiResponse<?> registerOrg(RegisterRequestOrg registerRequestOrg);
-    ApiResponse<?> addUserToOrg(String orgId, String userId);
-    ApiResponse<?> getOrgById(String orgId);
+    ApiResponse<?> addUserToOrg(Long orgId, Long userId);
+    ApiResponse<?> getOrgById(Long orgId);
     ApiResponse<?> getAllOrgByUser();
 }

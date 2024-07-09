@@ -23,11 +23,11 @@ public class AuthController {
     @PostMapping("register")
     ResponseEntity<ApiResponse<?>> register(@Valid @RequestBody RegisterRequest registerRequest){
         ApiResponse<?> response = authService.register(registerRequest);
-        if (response.getStatusCode() == HttpStatus.BAD_REQUEST.value()) {
+        if (response.getStatusCode() == HttpStatus.BAD_REQUEST) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.builder()
                             .status("Bad request")
                             .message("Registration unsuccessful")
-                            .statusCode(HttpStatus.BAD_REQUEST.value())
+                            .statusCode(HttpStatus.BAD_REQUEST)
                     .build());
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -36,11 +36,11 @@ public class AuthController {
     @PostMapping("login")
     ResponseEntity<ApiResponse<?>> login(@Valid @RequestBody LoginRequest loginRequest){
         ApiResponse<?> response = authService.login(loginRequest);
-        if (response.getStatusCode() == HttpStatus.UNAUTHORIZED.value()) {
+        if (response.getStatusCode() == HttpStatus.UNAUTHORIZED) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.builder()
                     .status("Bad request")
                     .message("Authentication failed")
-                    .statusCode(HttpStatus.UNAUTHORIZED.value())
+                    .statusCode(HttpStatus.UNAUTHORIZED)
                     .build());
         }
         return ResponseEntity.status(HttpStatus.OK).body(response);

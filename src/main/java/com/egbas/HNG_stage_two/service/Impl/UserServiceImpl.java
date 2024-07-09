@@ -3,6 +3,7 @@ package com.egbas.HNG_stage_two.service.Impl;
 import com.egbas.HNG_stage_two.entity.User;
 import com.egbas.HNG_stage_two.exceptions.UserNotFoundException;
 import com.egbas.HNG_stage_two.payload.ApiResponse;
+import com.egbas.HNG_stage_two.payload.UserResponse;
 import com.egbas.HNG_stage_two.repository.UserRepository;
 import com.egbas.HNG_stage_two.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -17,24 +18,25 @@ import java.util.Map;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     @Override
-    public ApiResponse<?> getUserById(String userId) {
+    public ApiResponse<?> getUserById(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new UserNotFoundException("User not found with ID: "+userId));
 
         Map<String, Object> data = new HashMap<>();
-        Map<String, String> userData = new HashMap<>();
-        userData.put("userId", user.getUserId());
-        userData.put("firstName", user.getFirstName());
-        userData.put("lastName", user.getLastName());
-        userData.put("email", user.getEmail());
-        userData.put("phone", user.getPhone());
-        data.put("data", userData);
+        UserResponse userResponse = UserResponse.builder()
+                .userId(user.getUserId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .build();
+        data.put("data", userResponse);
 
         return ApiResponse.builder()
                 .status("success")
                 .message("<message>")
                 .data(data)
-                .statusCode(HttpStatus.OK.value())
+                .statusCode(HttpStatus.OK)
                 .build();
     }
 }

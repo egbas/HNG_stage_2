@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class OrganisationResponse {
-    private String orgId;
+    private Long orgId;
     private String name;
     private String description;
 }

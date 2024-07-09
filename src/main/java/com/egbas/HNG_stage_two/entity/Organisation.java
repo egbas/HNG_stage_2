@@ -17,14 +17,14 @@ import java.util.Set;
 public class Organisation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String orgId;
+    private Long orgId;
 
     @NotBlank(message = "Organisation name must not be null")
     private String name;
 
-    @NotBlank(message = "Description must not be null")
+    //@NotBlank(message = "Description must not be null")
     private String description;
 
-    @ManyToMany(mappedBy = "organisations", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "organisations", cascade = CascadeType.ALL)
     private Set<User> users = new HashSet<>();
 }

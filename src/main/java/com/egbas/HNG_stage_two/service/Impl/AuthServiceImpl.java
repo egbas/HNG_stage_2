@@ -89,27 +89,30 @@ public class AuthServiceImpl implements AuthService {
         String jwtToken = jwtService.generateToken(user);
 
         Organisation organisation = Organisation.builder()
-                .name(user.getFirstName()+"'s Organisation")
-                .users((Set<User>) savedUser)
+                .name(savedUser.getFirstName()+"'s Organisation")
+                .users(new HashSet<>(Collections.singleton(savedUser)))
                 .build();
         organisationRepository.save(organisation);
 
         Map<String, Object> data = new HashMap<>();
         data.put("accessToken", jwtToken);  // Replace with actual token generation logic
-        Map<String, String> userData = new HashMap<>();
-        userData.put("userId", savedUser.getUserId());
-        userData.put("firstName", savedUser.getFirstName());
-        userData.put("lastName", savedUser.getLastName());
-        userData.put("email", savedUser.getEmail());
-        userData.put("phone", savedUser.getPhone());
-        data.put("user", userData);
+
+        UserResponse userResponse = UserResponse.builder()
+                .userId(savedUser.getUserId())
+                .firstName(savedUser.getFirstName())
+                .lastName(savedUser.getLastName())
+                .email(savedUser.getEmail())
+                .phone(savedUser.getPhone())
+                .build();
+
+        data.put("user", userResponse);
 
 //Depending on the situation you can return only the access token
         return ApiResponse.<Map<String, Object>>builder()
                 .status("success")
                 .message("Registration successful")
                 .data(data)
-                .statusCode(HttpStatus.CREATED.value())
+                .statusCode(HttpStatus.valueOf(HttpStatus.CREATED.value()))
                 .build();
     }
 
@@ -125,19 +128,21 @@ public class AuthServiceImpl implements AuthService {
 
         Map<String, Object> data = new HashMap<>();
         data.put("accessToken", jwtToken);  // Replace with actual token generation logic
-        Map<String, String> userData = new HashMap<>();
-        userData.put("userId", savedUser.getUserId());
-        userData.put("firstName", savedUser.getFirstName());
-        userData.put("lastName", savedUser.getLastName());
-        userData.put("email", savedUser.getEmail());
-        userData.put("phone", savedUser.getPhone());
-        data.put("user", userData);
+
+        UserResponse userResponse = UserResponse.builder()
+                .userId(savedUser.getUserId())
+                .firstName(savedUser.getFirstName())
+                .lastName(savedUser.getLastName())
+                .email(savedUser.getEmail())
+                .phone(savedUser.getPhone())
+                .build();
+        data.put("user", userResponse);
 
         return ApiResponse.<Map<String, Object>>builder()
                 .status("success")
-                .message("Registration successful")
+                .message("Login successful")
                 .data(data)
-                .statusCode(HttpStatus.OK.value())
+                .statusCode(HttpStatus.valueOf(HttpStatus.OK.value()))
                 .build();
     }
 }

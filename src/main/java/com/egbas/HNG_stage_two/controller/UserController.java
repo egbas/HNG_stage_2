@@ -18,7 +18,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("users/{userId}")
-    ResponseEntity<ApiResponse<?>> getUserRecord(@PathVariable String userId){
+    ResponseEntity<ApiResponse<?>> getUserRecord(@PathVariable Long userId){
         ApiResponse<?> response = userService.getUserById(userId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

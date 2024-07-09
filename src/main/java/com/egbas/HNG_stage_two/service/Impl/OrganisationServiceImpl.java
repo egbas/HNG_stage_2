@@ -29,26 +29,31 @@ public class OrganisationServiceImpl implements OrganisationService {
         Organisation organisation = Organisation.builder()
                 .name(user.getFirstName()+"'s Organisation")
                 .description(registerRequestOrg.getDescription())
-                .users((Set<User>) user)
+                .users(new HashSet<>(Collections.singleton(user)))
                 .build();
         Organisation savedOrg = organisationRepository.save(organisation);
+        OrganisationResponse org = OrganisationResponse.builder()
+                .orgId(savedOrg.getOrgId())
+                .name(savedOrg.getName())
+                .description(savedOrg.getDescription())
+                .build();
 
-        return ApiResponse.<Organisation>builder()
+        return ApiResponse.<OrganisationResponse>builder()
                 .status("success")
                 .message("Organisation created successfully")
-                .data(savedOrg)
-                .statusCode(HttpStatus.CREATED.value())
+                .data(org)
+                .statusCode(HttpStatus.CREATED)
                 .build();
     }
 
     @Override
-    public ApiResponse<?> addUserToOrg(String orgId, String userId) {
+    public ApiResponse<?> addUserToOrg(Long orgId, Long userId) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with ID: " + userId));
 
         Organisation organisation = Organisation.builder()
-                .users((Set<User>) user)
+                .users(new HashSet<>(Collections.singleton(user)))
                 .build();
 
         organisationRepository.save(organisation);
@@ -56,14 +61,14 @@ public class OrganisationServiceImpl implements OrganisationService {
         return ApiResponse.builder()
                 .status("success")
                 .message("User added to organisation successfully")
-                .statusCode(HttpStatus.OK.value())
+                .statusCode(HttpStatus.OK)
                 .build();
 
 
     }
 
     @Override
-    public ApiResponse<?> getOrgById(String orgId) {
+    public ApiResponse<?> getOrgById(Long orgId) {
         Organisation organisation = organisationRepository.findById(orgId)
                 .orElseThrow(() -> new RuntimeException("Organisation not found with ID: "+ orgId));
 
@@ -77,27 +82,21 @@ public class OrganisationServiceImpl implements OrganisationService {
                 .status("success")
                 .message("<message>")
                 .data(organisationResponse)
-                .statusCode(HttpStatus.OK.value())
+                .statusCode(HttpStatus.OK)
                 .build();
     }
 
     @Override
     public ApiResponse<?> getAllOrgByUser() {
         User user = userRepository.findByEmail(getLoginUser()).get();
-        List<Organisation> organisationList = organisationRepository.findByUsers_UserId(user.getUserId());
+        Set<Organisation> organisationList = user.getOrganisations();
 
         List<OrganisationResponse> organisationResponseList = convertToList(organisationList);
-        Map<String, List<OrganisationResponse>> data = new HashMap<>();
-        data.put("organisations", organisationResponseList);
-
-        // Build the API response
         return ApiResponse.builder()
                 .status("success")
                 .message("Organisations retrieved successfully")
-                .data(data)
+                .data(organisationResponseList)
                 .build();
-
-
     }
 
     public static String getLoginUser(){
@@ -110,7 +109,7 @@ public class OrganisationServiceImpl implements OrganisationService {
         }
     }
 
-    private List<OrganisationResponse> convertToList(List<Organisation> requests){
+    private List<OrganisationResponse> convertToList(Set<Organisation> requests){
         List<OrganisationResponse> organisationResponseList = new ArrayList<>();
         for (Organisation organisation : requests){
             OrganisationResponse categories = OrganisationResponse.builder()
